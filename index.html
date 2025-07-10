@@ -17,7 +17,12 @@
                 </div>
                 <div>
                     <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                    <input required type="email" id="email" name="email" placeholder="Enter email" class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-500">
+                   <input required 
+       type="email" 
+       id="email" 
+       name="email" 
+       placeholder="Enter email" 
+       class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-500">
                 </div>
                 <div>
                     <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
@@ -25,14 +30,14 @@
                 </div>
                 <div>
                     <label for="dob" class="block text-sm font-medium text-gray-700">Date of Birth</label>
-                    <input required type="date" id="dob" name="dob"  required class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-500">
+                    <input required type="date" min="1970-01-01" max="2007-12-31" id="dob" name="dob"  required class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-500">
                     
                 </div>
                 <div>
                     <input required type="checkbox" id="acceptTerms" name="terms" required class="mt-1 mr-2">
                     <label for="acceptTerms" class="text-sm font-medium text-gray-700">I accept the terms and conditions</label>
                 </div>
-                <button type="submit" class="w-full py-2 mt-4 text-white bg-blue-600 rounded-md hover:bg-blue-700">Submit</button>
+                <button id="submit" type="submit" class="w-full py-2 mt-4 text-white bg-blue-600 rounded-md hover:bg-blue-700">Submit</button>
             </form>
         </div>  
         </div>      
@@ -46,36 +51,43 @@
         </div>
 
  <script>
-    const  email=document.getElementById("email");
-    email.addEventListener("input", ()=> validate(email));
-   
-        function validate(email){
-           if(email.validity.typeMismatch || email.validity.valueMissing){
-            email.setCustomValidity("Please enter a valid email address in the format:abc@example.com");
-            email.reportValidity();}
-            else{
-                email.setCustomValidity("");
-            }
-        }
-        const dobInput = document.getElementById("dob");
-dobInput.addEventListener("input", () => {
-    const dob = new Date(dobInput.value);
-    const today = new Date();
-    const todayUTC = new Date(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate())); 
-
-    const minAge = new Date(Date.UTC(todayUTC.getFullYear() - 55, todayUTC.getMonth(), todayUTC.getDate()));
-    const maxAge = new Date(Date.UTC(todayUTC.getFullYear() - 18, todayUTC.getMonth(), todayUTC.getDate()));
-    const dobFormatted = dob.toISOString().split("T")[0];
-    const minDate = minAge.toISOString().split("T")[0];
-    const maxDate = maxAge.toISOString().split("T")[0];
-
-    //console.log(`DOB: ${dobFormatted}, Min Date: ${minDate}, Max Date: ${maxDate}`); 
-    if (dobFormatted < minDate || dobFormatted > maxDate) {
-        dobInput.setCustomValidity(`Date of birth must be between 18 and 55 years old (Valid range: ${minDate} to ${maxDate}).`);
+    const email = document.getElementById("email");
+const form = document.getElementById("user-form");
+email.addEventListener("input", () => validate(email));
+const submit=document.getElementById('submit');
+submit.addEventListener('click',()=>validate(email));
+function validate(element){
+    if (element.validity.typeMismatch) {
+        element.setCustomValidity("Invalid email format.");
+        element.reportValidity();
     } else {
-        dobInput.setCustomValidity("");
+        email.setCustomValidity("");
+    }
+}
+dobInput.addEventListener("input", () => {
+            const dob = new Date(dobInput.value);
+            const today = new Date();
+            const todayUTC = new Date(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()));
+            const minAge = new Date(Date.UTC(todayUTC.getFullYear() - 55, todayUTC.getMonth(), todayUTC.getDate()));
+            const maxAge = new Date(Date.UTC(todayUTC.getFullYear() - 18, todayUTC.getMonth(), todayUTC.getDate()));
+            const dobFormatted = dob.toISOString().split("T")[0];
+            const minDate = "1970-01-01";
+            const maxDate = "2007-12-31";
+
+            if (dobFormatted < minDate || dobFormatted > maxDate) {
+                dobInput.setCustomValidity(`Date of birth must be between 18 and 55 years old (Valid range: ${minDate} to ${maxDate}).`);
+                dobInput.reportValidity();
+            } else {
+                dobInput.setCustomValidity("");
+            }
+        });
+form.addEventListener("submit", function(event) {
+    validate(email);
+    if (!form.checkValidity()) {
+        event.preventDefault();
     }
 });
+   
  </script>
  <script src="index.js"></script>
 </body>
